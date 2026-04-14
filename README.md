@@ -1,89 +1,182 @@
-📚 Multi-Vector RAG with LangChain + Chroma
+# 📚 Multi-Vector RAG with LangChain + Chroma
 
-A simple Retrieval-Augmented Generation (RAG) pipeline that uses multi-vector retrieval to improve search quality by indexing summaries instead of full documents, while still retrieving the original chunks.
+## 🚀 Overview
 
-🚀 What This Project Does
-Loads PDFs from a directory
-Splits them into smaller chunks
-Generates summaries using an LLM
-Stores:
-Summaries → in Chroma (vector DB)
-Original chunks → in byte store
-Uses MultiVectorRetriever to:
-Search summaries (fast + relevant)
-Return original chunks (rich context)
-🧠 Key Idea (Why Multi-Vector?)
+This project implements a **Retrieval-Augmented Generation (RAG)** pipeline using a **multi-vector retrieval strategy**.
 
-Instead of embedding raw text (slow + noisy):
+Instead of embedding full documents, it:
 
-You embed summaries → better semantic search
-You store original text separately → no information loss
+* Embeds **summaries** for better semantic search
+* Stores **original chunks separately**
+* Retrieves **high-quality context** efficiently
 
-👉 Best of both worlds:
+---
 
-Fast retrieval
-High-quality context
-🏗️ Tech Stack
-LangChain
-ChromaDB
-OpenRouter (LLM API)
-HuggingFace Embeddings
-Python
-📁 Project Structure
+## 🧠 Core Idea
+
+Traditional RAG:
+
+* Embed full text → noisy + slower
+
+This approach:
+
+* Summaries → used for embedding (clean + fast)
+* Original chunks → stored separately (no info loss)
+
+👉 Result: Better retrieval + better answers
+
+---
+
+## 🏗️ Tech Stack
+
+* LangChain
+* ChromaDB
+* OpenRouter (LLM API)
+* HuggingFace Embeddings
+* Python
+
+---
+
+## 📁 Project Structure
+
+```
 .
 ├── chroma_db/                  # Vector DB storage
-├── BOOKS AND PAPERS FOR AI/   # Your PDFs
+├── BOOKS AND PAPERS FOR AI/   # Input PDFs
 ├── main.py                     # Main script
 ├── requirements.txt
 └── README.md
-⚙️ Setup
-1. Clone repo
+```
+
+---
+
+## ⚙️ Setup
+
+### 1. Clone Repository
+
+```
 git clone <your-repo-url>
 cd <repo-name>
-2. Install dependencies
+```
+
+### 2. Install Dependencies
+
+```
 pip install -r requirements.txt
-3. Set API Key
+```
 
-Create .env or set manually:
+### 3. Set API Key
 
+#### Linux / Mac
+
+```
 export OPENROUTER_API_KEY=your_key_here
+```
 
-(Windows PowerShell)
+#### Windows (PowerShell)
 
+```
 setx OPENROUTER_API_KEY "your_key_here"
-▶️ How It Works
-1. Load Documents
-DirectoryLoader(..., loader_cls=PyPDFLoader)
-2. Split into Chunks
-RecursiveCharacterTextSplitter(chunk_size=300)
-3. Generate Summaries (LLM)
+```
 
-Each chunk → summarized using OpenRouter model
+---
 
-4. Store Data
-Summaries → Chroma (vector DB)
-Original chunks → InMemoryByteStore
-5. Retrieval
-MultiVector Retrieval
-multi_vector_retriever.invoke(query)
-Searches summaries
-Returns full original chunk
-Normal Similarity Search
-summaries_collection.similarity_search(query)
-Only returns summaries
-🔍 Example Output
-Tell me about concept mapper?
-MultiVectorRetriever Output:
-Full original chunk (detailed context)
-Similarity Search Output:
-Only summary (short)
-⚠️ Known Issues / Notes
-❌ This line has a bug:
+## ▶️ How It Works
+
+### 1. Load Documents
+
+* Loads PDFs using `DirectoryLoader`
+
+### 2. Split Documents
+
+* Uses `RecursiveCharacterTextSplitter`
+* Chunk size = 300
+
+### 3. Generate Summaries
+
+* Each chunk is summarized using an LLM
+
+### 4. Store Data
+
+* Summaries → stored in **Chroma (vector DB)**
+* Original chunks → stored in **InMemoryByteStore**
+
+### 5. Retrieval
+
+#### MultiVectorRetriever
+
+* Searches summaries
+* Returns full original chunk
+
+#### Similarity Search
+
+* Searches summaries only
+* Returns short summaries
+
+---
+
+## 🔍 Example Usage
+
+```python
+result = multi_vector_retriever.invoke("Tell me about concept mapper?")
+print(result[0])
+
+result2 = summaries_collection.similarity_search("What is concept mapper?")
+print(result2)
+```
+
+---
+
+## ⚠️ Bug Fix
+
+❌ Incorrect:
+
+```python
 doc_id = [str(uuid.uuid4() for _ in chunks)]
+```
 
-✅ Fix:
+✅ Correct:
 
+```python
 doc_id = [str(uuid.uuid4()) for _ in chunks]
-reset_collection() deletes previous data every run
-InMemoryByteStore → data is NOT persistent
-OpenRouter free models may be slow
+```
+
+---
+
+## ⚠️ Notes
+
+* `reset_collection()` clears DB on every run
+* `InMemoryByteStore` is not persistent
+* Free OpenRouter models may be slow
+
+---
+
+## 🔥 Future Improvements
+
+* Persistent storage (Redis / disk)
+* FastAPI backend
+* UI for querying
+* Streaming responses
+* Embedding visualization (3D)
+
+---
+
+## 💡 Why This Matters
+
+This setup is closer to **production-grade RAG systems**:
+
+* Better semantic retrieval
+* Reduced noise
+* Scalable for large datasets
+
+---
+
+## ⭐ Contribute
+
+Feel free to fork, improve, and build on top of this.
+
+---
+
+## 📌 Tags
+
+#RAG #LangChain #ChromaDB #LLM #AI #OpenRouter #VectorSearch #MachineLearning
